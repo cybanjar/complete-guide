@@ -1,11 +1,20 @@
-const http = require('http');
-const routes = require('./routes');
-const server = http.createServer(routes.handler);
+const path = require('path')
+
 const express = require('express')
+const bodyParser = require('body-parser')
+const adminRouter = require('./routes/admin.js')
+const shopRouter = require('./routes/shop.js')
+
 const app = express()
 
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.use('/admin', adminRouter)
+app.use(shopRouter)
+
 app.use((req, res, next) => {
-  console.log('middleare');
+  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'))
 })
 
-server.listen(3000);
+app.listen(3000);
